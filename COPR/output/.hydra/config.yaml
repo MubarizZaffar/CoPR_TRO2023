@@ -1,0 +1,28 @@
+pipeline: Relative Camera Pose Estimation pipeline
+data_params:
+  datasetname: station_escalator
+  work_dir: /home/mzaffar/Documents/codes/COPR
+  img_dir: /home/mzaffar/Documents/datasets/station_escalator
+  train_pairs_fname: ${data_params.work_dir}/assets/data/db_all_med_hard_train_station_escalator.txt
+  val_pairs_fname: ${data_params.work_dir}/assets/data/db_all_med_hard_valid_station_escalator.txt
+  descdictpathtrain: ${data_params.work_dir}/assets/data/train_descs_resnet34_originalmodel_ds507scenes_5e_05_stationescalator.pkl
+  descdictpathval: ${data_params.work_dir}/assets/data/val_descs_resnet34_originalmodel_ds507scenes_5e_05_stationescalator.pkl
+model_params:
+  backbone_net: resnet34
+  resume_snapshot: null
+train_params:
+  bs: 32
+  lr: 0.0005
+  alpha: 1
+  n_workers: 8
+  n_train_iters: 800000
+  scheduler:
+    lrate_decay_steps: 50000
+    lrate_decay_factor: 0.5
+output_params:
+  out_dir: /home/mzaffar/Documents/codes/COPR/output
+  logger_dir: ${output_params.out_dir}/tboard/${model_params.backbone_net}
+  snapshot_dir: ${output_params.out_dir}/snapshots/${model_params.backbone_net}
+  validate_interval: 1300
+  log_scalar_interval: 200
+seed: 1984

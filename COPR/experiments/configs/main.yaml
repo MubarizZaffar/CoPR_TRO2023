@@ -1,0 +1,40 @@
+pipeline: Relative Camera Pose Estimation pipeline
+defaults:
+  - experiment: 7scenes
+  - model: relposenet
+model_paramsrelposenetorg:
+  backbone_net: resnet34_originalmodel_ds507scenes_5e_05
+  resume_snapshot: null
+  snapshot: ${paths.snapshots_dir}/resnet34_originalmodel_ds507scenes_5e_05/best_val.pth #resnet34_originalmodel_ds20University_1e_05 or resnet34_originalmodel_ds50University_5e_05 or resnet34_originalmodel_ds507scenes_5e_05 or resnet34_originalmodel_newest3_mixed_University_5e_05 or resnet34_originalmodel_newest_mixed_7scenes_5e_06
+model_paramsrelposenettriplet:
+  backbone_net: resnet34_originalmodel_ds207scenestriplet_1e_05
+  resume_snapshot: null
+  snapshot: ${paths.snapshots_dir}/resnet34_originalmodel_ds207scenestriplet_1e_05/best_val.pth 
+model_paramsrelposenetdistancebased:
+  backbone_net: resnet34_originalmodel_station_escalator_v4_station_escalatordistance_5e_05
+  resume_snapshot: null
+  snapshot: ${paths.snapshots_dir}/resnet34_originalmodel_station_escalator_v4_station_escalatordistance_5e_05/best_val.pth #resnet34_originalmodel_station_escalator_v4_station_escalatordistance_5e_05 or /resnet34_originalmodel_syntheticshopfacade_train2m25cm_val2m100cm_do0.3synthetic_shopfacadedistance_0.0001 0r resnet34_originalmodel_ds207scenesdistance_0.0001 or resnet34_originalmodel_ds20University_1e_05 or resnet34_originalmodel_ds50University_5e_05 or resnet34_originalmodel_ds507scenes_5e_05 or resnet34_originalmodel_newest3_mixed_University_5e_05 or resnet34_originalmodel_newest_mixed_7scenes_5e_06
+paths:
+  work_dir: /home/mzaffar/Documents/codes/COPR
+  datasets_home_dir: /home/mzaffar/Documents/datasets
+  output_home_dir: ${paths.work_dir}/output
+  snapshots_dir: ${paths.work_dir}/output/snapshots/
+hydra:
+  run:
+    dir: ${paths.output_home_dir}  
+data_params:
+  loss_type: relativepose #relativepose, triplet, distance
+  datasetname: station_escalator # 7scenes or Cambridge or University or synthetic_shopfacade
+  work_dir: /home/mzaffar/Documents/codes/COPR
+  img_dir: /home/mzaffar/Documents/datasets/station_escalator #7scenes or Cambridge or University or synthetic_shopfacade
+  train_pairs_fname: ${data_params.work_dir}/assets/data/db_all_med_hard_train_station_escalator.txt #db_all_med_hard_train_shopfacade_2m25cm_top20 or db_all_med_hard_train_university_ds20 or db_all_med_hard_train_ds50.txt or db_all_med_hard_train_university_ds50.txt or db_all_med_hard_train_newest_mixed or db_all_med_hard_train_university_newest_mixedpairs
+  val_pairs_fname: ${data_params.work_dir}/assets/data/db_all_med_hard_valid_station_escalator.txt #db_all_med_hard_train_shopfacade_2m100cm_top20 or db_all_med_hard_valid_ds50_newer or db_all_med_hard_valid_university_ds20_newer.txt or db_all_med_hard_valid_ds50_newer.txt or db_all_med_hard_valid_university_ds50_newer.txt or db_all_med_hard_valid_newest_mixed or db_all_med_hard_valid_university_newest3_mixedpairs 
+train_params:
+  bs: 1
+  lr: 1e-3
+  alpha: 1
+  n_workers: 8
+  n_train_iters: 125000 # 42k is the size of our training dataset 'db_all_med_hard_train.txt'
+  scheduler:
+    lrate_decay_steps: 15000
+    lrate_decay_factor: 0.5
